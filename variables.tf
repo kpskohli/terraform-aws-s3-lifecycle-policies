@@ -1,10 +1,10 @@
 variable "name" {
-  description = "(Required) The name of the bucket"
+  description = "(Required) The name of the bucket."
   type        = string
 }
 
 variable "acl" {
-  description = "(Optional- Defaults to 'private') Amazon S3 access control lists (ACLs) enable you to manage access to buckets and objects"
+  description = "(Optional - Defaults to 'private') Amazon S3 access control lists (ACLs) enable you to manage access to buckets and objects"
   default     = "private"
 }
 
@@ -29,34 +29,44 @@ variable "versioning_config" {
 }
 
 variable "tags" {
-  description = "(Optional) A map of tags to apply to all resources"
+  description = "(Optional) A map of tags to apply to all resources."
   type        = map(string)
   default     = {}
 }
 
 variable "lifecycle_rules" {
-  description = "(Optional) A data structure to create lifcycle rules"
-  type = list(object({
-    id                                     = string
-    prefix                                 = string
-    tags                                   = map(string)
-    enabled                                = bool
-    abort_incomplete_multipart_upload_days = number
-    expiration_config = list(object({
-      days                         = number
-      expired_object_delete_marker = bool
-    }))
-    noncurrent_version_expiration_config = list(object({
-      days = number
-    }))
-    transitions_config = list(object({
-      days          = number
-      storage_class = string
-    }))
-    noncurrent_version_transitions_config = list(object({
-      days          = number
-      storage_class = string
-    }))
-  }))
-  default = []
+  description = "(Optional) List of maps containing configuration of object lifecycle management."
+  type        = any
+  default     = []
+
+  # Example:
+  #
+  # lifecycle_rules = [
+  #   {
+  #     id      = "log"
+  #     enabled = true
+  #
+  #     prefix = "log/"
+  #
+  #     tags = {
+  #       "rule"      = "log"
+  #       "autoclean" = "true"
+  #     }
+  #
+  #     transition = [
+  #       {
+  #         days          = 30
+  #         storage_class = "STANDARD_IA" # or "ONEZONE_IA"
+  #       },
+  #       {
+  #         days          = 60
+  #         storage_class = "GLACIER"
+  #       }
+  #     ]
+  #
+  #     expiration = {
+  #       days = 90
+  #     }
+  #   }
+  # ]
 }
