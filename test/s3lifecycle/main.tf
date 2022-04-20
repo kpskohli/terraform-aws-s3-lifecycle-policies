@@ -9,52 +9,30 @@ module "s3_lifecycle_rules" {
 
   lifecycle_rules = [
     {
-      id                                     = "basic"
-      enabled                                = true
-      prefix                                 = ""
-      tags                                   = {}
-      abort_incomplete_multipart_upload_days = 0
-      expiration_config = [
-        {
-          days                         = 90
-          expired_object_delete_marker = false
-        }
-      ]
-      noncurrent_version_expiration_config  = []
-      transitions_config                    = []
-      noncurrent_version_transitions_config = []
-    },
-    {
-      id      = "complete"
+      id      = "log"
       enabled = true
-      prefix  = "*"
+
+      prefix = "log/"
+
       tags = {
-        "Environment" = "Dev"
+        "rule"      = "log"
+        "autoclean" = "true"
       }
-      abort_incomplete_multipart_upload_days = 30
-      expiration_config = [
+
+      transition = [
         {
-          days                         = 90
-          expired_object_delete_marker = false
-        }
-      ]
-      noncurrent_version_expiration_config = [
-        {
-          days = 120
-        }
-      ]
-      transitions_config = [
-        {
-          days          = 90
+          days          = 30
           storage_class = "STANDARD_IA"
-        }
-      ]
-      noncurrent_version_transitions_config = [
+        },
         {
-          days          = 120
+          days          = 60
           storage_class = "GLACIER"
         }
       ]
+
+      expiration = {
+        days = 90
+      }
     }
   ]
 }
